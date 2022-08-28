@@ -37,7 +37,22 @@ class CreateCinemaSchema extends Migration
      */
     public function up()
     {
-        throw new \Exception('implement in coding task 4, you can ignore this exception if you are just running the initial migrations.');
+        Schema::create('cinema', function (Blueprint $table) {
+            $table->id();
+            $table->string('film_name');
+            $table->foreignId('user_id')->constrained();
+            $table->dateTime('prefer_time');
+            $table->enum('is_booked', ['Yes', 'No'])->default('No');
+            $table->dateTime('cinema_start_time');
+            $table->string('location');
+            $table->double('price');
+            $table->enum('seat_type', ['Premium', 'deluxe', 'normal']);
+            $table->double('discount_percentage');
+            $table->double('additional_percentage');
+
+            $table->timestamps();
+        });
+        // throw new \Exception('implement in coding task 4, you can ignore this exception if you are just running the initial migrations.');
     }
 
     /**
@@ -47,5 +62,6 @@ class CreateCinemaSchema extends Migration
      */
     public function down()
     {
+        Schema::dropIfExists('users');
     }
 }

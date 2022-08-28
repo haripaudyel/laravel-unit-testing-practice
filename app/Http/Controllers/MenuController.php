@@ -95,34 +95,34 @@ class MenuController extends BaseController
 
     public function getMenuItems()
     {
-        // $all_items = MenuItem::get()->collect();
-        // $new_item = [];
-        // foreach($all_items as $key => $item){
-        //     $new_item = $item->where('parent_id',null)->get();
-        //     foreach($new_item as $new_key => $menu){
-        //         $new_item[$new_key]['children'] = $menu;
-        //         // if($item->id == $menu->parent_id){
-        //         // }
-        //     }
-        // }
-        // return $new_item;
-
-        $collection = MenuItem::get();
-
-        $modified = $collection->map(function ($item, $key) {
-            if ($item->parent_id == null) {
-                return [
-                    'id' => $item->id,
-                    'name' => $item->name,
-                    'url' => $item->url,
-                    'parent_id' => $item->parent_id,
-                    'created_at' => $item->created_at,
-                    'updated_at' => $item->updated_at,
-                    'children' => []
-                ];
+        $all_items = MenuItem::get()->collect();
+        $new_item = [];
+        foreach($all_items as $key => $item){
+            $new_item = $item->where('parent_id',null)->get();
+            foreach($new_item as $new_key => $menu){
+                $new_item[$new_key]['children'] = $menu;
+                // if($item->id == $menu->parent_id){
+                // }
             }
-        });
+        }
+        return $new_item;
 
-        return $modified;
+        // $collection = MenuItem::get();
+
+        // $modified = $collection->map(function ($item, $key) {
+        //     if ($item->parent_id == null) {
+        //         return [
+        //             'id' => $item->id,
+        //             'name' => $item->name,
+        //             'url' => $item->url,
+        //             'parent_id' => $item->parent_id,
+        //             'created_at' => $item->created_at,
+        //             'updated_at' => $item->updated_at,
+        //             'children' => []
+        //         ];
+        //     }
+        // });
+
+        // return $modified;
     }
 }
