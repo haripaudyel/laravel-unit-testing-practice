@@ -95,34 +95,39 @@ class MenuController extends BaseController
 
     public function getMenuItems()
     {
-        $all_items = MenuItem::get()->collect();
-        $new_item = [];
-        foreach($all_items as $key => $item){
-            $new_item = $item->where('parent_id',null)->get();
-            foreach($new_item as $new_key => $menu){
-                $new_item[$new_key]['children'] = $menu;
-                // if($item->id == $menu->parent_id){
-                // }
+    $data = MenuItem::latest()->get()->toArray();
+
+    // Separate parent and child modules
+    $parents = [];
+    $children = [];
+
+    foreach ($data as $module) {
+        if ($module['parent_id'] === null) {
+            $parents[$module['id']] = $module;
+        } else {
+            $children[$module['id']] = $module;
+        }
+    }
+    // Function to organize children recursively
+    function organizeChildren($parentId, &$children)
+    {
+        $result = [];
+        foreach ($children as $child) {
+            if ($child['parent_id'] === $parentId) {
+                $child['children'] = organizeChildren($child['id'], $children);
+                $result[] = $child;
             }
         }
-        return $new_item;
+        return $result;
+    }
 
-        // $collection = MenuItem::get();
+    // Organize child modules under their respective parent
+    foreach ($parents as &$parent) {
+        // dd($parent);
+        $parent['children'] = organizeChildren($parent['id'], $children);
+    }
 
-        // $modified = $collection->map(function ($item, $key) {
-        //     if ($item->parent_id == null) {
-        //         return [
-        //             'id' => $item->id,
-        //             'name' => $item->name,
-        //             'url' => $item->url,
-        //             'parent_id' => $item->parent_id,
-        //             'created_at' => $item->created_at,
-        //             'updated_at' => $item->updated_at,
-        //             'children' => []
-        //         ];
-        //     }
-        // });
-
-        // return $modified;
+    // Extract only the parent modules as a nested array
+    return array_values($parents);
     }
 }
